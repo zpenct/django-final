@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <title>{{Title}}</title>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2 class="text-center alert alert-info">{{Content}}</h2>
+
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <a href="{% url "tasks:tasks_list"%}">Tasks</a>
+          </li>
+        </ol>
+      </nav>
+
+      <div class="semester-filter mb-4">
+        <div class="d-flex gap-2">
+        {% for status in Status %}
+            {% if selected_status == status %}
+                <a href="{% url "tasks:tasks_by_status" status=status%}" class="badge bg-primary text-decoration-none">{{ status }}</a>
+            {% else %}
+                <a  href="{% url "tasks:tasks_by_status" status=status%}" class="badge bg-secondary text-decoration-none">{{ status }}</a>
+            {% endif %}
+        {% endfor %}
+        </div>
+      </div>  
+
+    <div class="d-flex justify-content-end">
+        <a href="{% url "tasks:task_new"%}" class="btn btn-primary mb-3 mb-3"><i class="bi bi-plus"></i>New Task</a>  
+    </div>
+      
+    
+    <div class="row">
+        <div class="table-responsive">
+          <table class="table table-hover table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>title</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Assigned From</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              {% for task in Tasks %}
+              <tr>
+                <td>{{task.id}}</td>
+                <td>
+                  <a href="{% url "tasks:tasks_detail" tasks_id=task.id%}">{{task.title}}</a>
+                </td>
+                <td>{{task.due_date}}</td>
+                <td>
+                    {% if task.status == 'completed' %}
+                        <span class="badge bg-success">Completed</span>
+                    {% elif task.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif task.status == 'in_progress' %}
+                        <span class="badge bg-info text-white">In Progress</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Unknown</span>
+                    {% endif %}
+                </td>
+                
+                <td>{% if task.course %}
+                    {{ task.course.name }}
+                {% else %}
+                    No course assigned
+                {% endif %}</td>
+                <td>
+                  <input
+                    type="button"
+                    data-sid="{{task.id}}"
+                    class="btn btn-warning btn-sm btn-edit"
+                    value="Edit"
+                  />
+                  <input
+                    type="button"
+                    data-sid="{{task.id}}"
+                    class="btn btn-danger btn-sm btn-del"
+                    value="Delete"
+                  />
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

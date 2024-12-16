@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <title>{{Course.name}}</title>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2 class="text-center alert alert-info">Tugas Final Web {{Slug}}</h2>
+
+      
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{Course.name}}</li>
+        </ol>
+      </nav>
+      
+      <div class="d-flex justify-content-end">
+          <a href="{% url 'tasks:task_new_for_course' Course.id %}" class="btn btn-primary mb-3">
+            <i class="bi bi-plus"></i>Create Task
+          </a>
+      </div>
+
+      <main>
+        <p>Nama : {{Course.name}}</p>
+        <p>SKS :{{Course.sks}}</p>
+        <p>Semester : {{Course.semester}}</p>
+        <p>Deskripsi : {{Course.description}}</p>
+        <h4>Tasks</h4>
+        {% if Tasks %}
+        <ul>
+            {% for task in Tasks %}
+                <li>
+                  <a href="/">
+                    <strong>{{ task.title }}</strong>  (Due: {{ task.due_date }})
+                  </a>
+                </li>
+            {% endfor %}
+        </ul>
+      {% else %}
+        <p>No tasks assigned to this course.</p>
+      {% endif %}
+      
+      </main>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    {% comment %} {% include "courses/ajax.html" %} {% endcomment %}
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<script>
+  $(document).ready(function () {
+    $("#change-status-btn").on("click", function () {
+      var newStatus = "";
+      var taskId = "{{ Task.id }}";
+
+      if ("{{ Task.status }}" === "pending") {
+        newStatus = "in_progress";
+      } else if ("{{ Task.status }}" === "in_progress") {
+        newStatus = "completed";
+      }
+
+      if (newStatus) {
+        $.ajax({
+          url: '{% url "tasks:update_task_status" task_id=Task.id %}',
+          method: "POST",
+          data: {
+            task_id: taskId,
+            status: newStatus,
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+          success: function (response) {
+            $("#status-badge")
+              .removeClass()
+              .addClass("badge bg-" + response.status_class)
+              .text(response.status);
+            $("#change-status-btn").text(response.button_text);
+          },
+          error: function (xhr, status, error) {
+            alert("Terjadi kesalahan, coba lagi.");
+          },
+        });
+      }
+    });
+  });
+</script>
