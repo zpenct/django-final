@@ -81,18 +81,16 @@
                     No course assigned
                 {% endif %}</td>
                 <td>
+                  <a href="{% url 'tasks:task_edit' pk=task.id %}" 
+                  class="btn btn-warning btn-sm">Edit</a>
                   <input
-                    type="button"
-                    data-sid="{{task.id}}"
-                    class="btn btn-warning btn-sm btn-edit"
-                    value="Edit"
+                      type="button"
+                      data-sid="{{task.id}}"
+                      class="btn btn-danger btn-sm btn-del"
+                      value="Delete"
                   />
-                  <input
-                    type="button"
-                    data-sid="{{task.id}}"
-                    class="btn btn-danger btn-sm btn-del"
-                    value="Delete"
-                  />
+              </td>
+              
                 </td>
               </tr>
               {% endfor %}
