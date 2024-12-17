@@ -12,5 +12,5 @@ urlpatterns = [
     path("<slug:slug>", views.CourseDetailView.as_view(), name="course_detail"),
     # path("<slug:slug>", views.detail, name="course_detail"),
     path("<slug:slug>/edit/", views.CourseUpdateView.as_view(), name="course_edit"),
-    
+    path('<int:pk>/delete/', views.CourseDeleteView.as_view(), name='course_delete'),
 ]

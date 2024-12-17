@@ -5,6 +5,7 @@ from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from . import models
 from . import forms
+from django.views.generic import ListView, DetailView,DeleteView
 
 def detail(request, slug):
     course = models.Course.objects.get(slug=slug)
@@ -120,3 +121,12 @@ class CourseUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context['form'] = context.pop('form')
         return context
+    
+class CourseDeleteView(DeleteView):
+    model = models.Course
+    success_url = reverse_lazy('courses:course_list')
+
+    def delete(self, request, *args, **kwargs):
+        task = self.get_object()
+        task.delete()
+        return JsonResponse({'status': 'success', 'message': 'Course successfully deleted'})
