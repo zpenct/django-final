@@ -66,12 +66,8 @@
                 <td>{{course.sks}}</td>
                 <td>{{course.tasks.count}}</td>
                 <td>
-                  <input
-                    type="button"
-                    data-sid="{{course.id}}"
-                    class="btn btn-warning btn-sm btn-edit"
-                    value="Edit"
-                  />
+                  <a href="{% url 'courses:course_edit' slug=course.slug %}" 
+                  class="btn btn-warning btn-sm">Edit</a>
                   <input
                     type="button"
                     data-sid="{{course.id}}"
