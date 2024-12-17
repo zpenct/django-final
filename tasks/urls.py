@@ -11,4 +11,5 @@ urlpatterns = [
     path("<int:course_id>/new/", views.TaskCreateView2.as_view(), name="task_new_for_course"),
     path("<str:tasks_id>/", views.TaskDetailView.as_view(), name="tasks_detail"),
     path("status/<str:status>/", views.TaskListView.as_view(), name="tasks_by_status"),
+    path('<int:pk>/delete/', views.TaskDeleteView.as_view(), name='task_delete'),
 ]
