@@ -8,6 +8,7 @@ from . import models
 from . import forms
 from courses.models import Course
 from django.utils import timezone
+from django.utils.timezone import make_aware
 
 def index(request):
     return render(request, 'tasks/index.html')
@@ -40,33 +41,37 @@ class TaskDetailView(DetailView):
 
     def get_object(self):
         tasks_id = self.kwargs.get("tasks_id")
-        return get_object_or_404(models.Task, id=tasks_id) 
+        return get_object_or_404(models.Task, id=tasks_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         task = self.get_object()
-        
+
+        due_date = task.due_date
+        if due_date.tzinfo is None:
+            due_date = make_aware(due_date)
+
         now = timezone.now()
-        time_left = task.due_date - now
-        
+
+        time_left = due_date - now
         print(time_left.total_seconds())
-        
+
         if time_left.total_seconds() < 0:
             status_message = "Task is overdue"
-            time_left = abs(time_left)  # Menggunakan nilai positif untuk menghitung sisa waktu
+            time_left = abs(time_left)
         else:
             status_message = "Time left"
 
         hours_left = time_left.days * 24 + time_left.seconds // 3600
         minutes_left = (time_left.seconds // 60) % 60
-        
+
         if time_left.total_seconds() < 0:
             context['Time_left'] = f'{hours_left} hours {minutes_left} minutes overdue'
         else:
             context['Time_left'] = f'{hours_left} hours {minutes_left} minutes left'
 
         context['Status_message'] = status_message
-        context['Task'] = self.get_object()
+        context['Task'] = task
         return context
         
 class TaskCreateView(CreateView):
@@ -113,32 +118,18 @@ class TaskCreateView2(CreateView):
             initial['course'] = course
         return initial
 
-def update_task_status(request):
+
+def update_status(request, task_id):
     if request.method == 'POST':
-        task_id = request.POST.get('task_id')
-        new_status = request.POST.get('status')
-        task = get_object_or_404(Task, id=task_id)
-        
-        # Perbarui status task
-        task.status = new_status
-        task.save()
-
-        # Tentukan kelas badge dan teks tombol berdasarkan status baru
-        if new_status == 'pending':
-            status_class = 'warning text-dark'
-            button_text = 'Mark as In Progress'
-        elif new_status == 'in_progress':
-            status_class = 'info text-white'
-            button_text = 'Mark as Completed'
-        elif new_status == 'completed':
-            status_class = 'success'
-            button_text = 'No action available'
+        print("ke klik")
+        task = models.Task.objects.get(id=task_id)
+        if task.status == 'pending':
+            task.status = 'in_progress'
+        elif task.status == 'in_progress':
+            task.status = 'completed'
         else:
-            status_class = 'secondary'
-            button_text = 'No action available'
+            return JsonResponse({'error': 'Task already completed'}, status=400)
 
-        return JsonResponse({
-            'status': new_status.capitalize(),
-            'status_class': status_class,
-            'button_text': button_text,
-        })
+        task.save()
+        return JsonResponse({'status': task.status})
+    return JsonResponse({'error': 'Invalid request'}, status=400)

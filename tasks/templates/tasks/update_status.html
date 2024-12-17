@@ -1,36 +1,33 @@
 <script>
   $(document).ready(function () {
-    $("#change-status-btn").on("click", function () {
-      var newStatus = "";
-      var taskId = "{{ Task.id }}";
-
-      if ("{{ Task.status }}" === "pending") {
-        newStatus = "in_progress";
-      } else if ("{{ Task.status }}" === "in_progress") {
-        newStatus = "completed";
-      }
-
-      if (newStatus) {
+    $(".btn-update").on("click", function () {
+        const taskId = $(this).data("task-id");
         $.ajax({
-          url: '{% url "tasks:update_task_status" task_id=Task.id %}',
-          method: "POST",
-          data: {
-            task_id: taskId,
-            status: newStatus,
-            csrfmiddlewaretoken: "{{ csrf_token }}",
-          },
-          success: function (response) {
-            $("#status-badge")
-              .removeClass()
-              .addClass("badge bg-" + response.status_class)
-              .text(response.status);
-            $("#change-status-btn").text(response.button_text);
-          },
-          error: function (xhr, status, error) {
-            alert("Terjadi kesalahan, coba lagi.");
-          },
+            url: `/tasks/${taskId}/update_status/`, 
+            type: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" }, 
+            success: function (response) {
+                if (response.status) {
+                    $(".alert").html(`Status berhasil diperbarui menjadi <strong>${response.status}</strong>.`);
+                    $(".alert").show();
+
+                    if (response.status === "in_progress") {
+                        $(".btn-update").text("Mark as Completed");
+                    } else if (response.status === "completed") {
+                        $(".btn-update").prop("disabled", true).text("Completed");
+                    }
+
+                    setTimeout(function () {
+                        $(".alert").alert('close');
+                        location.reload();
+                    }, 3000);
+                }
+            },
+            error: function (xhr) {
+                alert(xhr.responseJSON.error || "Terjadi kesalahan.");
+            }
         });
-      }
     });
-  });
+});
+
 </script>

@@ -25,30 +25,29 @@
       </nav>
     
       <main>
-        <p>Title : {{Task.status}}</p>
         <p>Title : {{Task.title}}</p>
         <p>Link: <a href={{Task.link}}>{{Task.link}}</a></p>
         <p>Deskripsi : {{Task.description}}</p>
-        <p>Due date : {{Task.due_date}} ({{Time_left}})</p>
-        <p>
-            {% if Status_message == "Task is overdue" %}
-                <span class="badge bg-danger">{{Status_message}}</span>
-            {% else %}
-                <span class="badge bg-success">{{Status_message}}</span>
-            {% endif %}
-        </p>
+        <p>Due date : {{Task.due_date}}</p>
 
-         <button id="change-status-btn" class="btn btn-primary">
-            {% if Task.status == 'pending' %}
-              Mark as In Progress
-            {% elif Task.status == 'in_progress' %}
-              Mark as Completed
-            {% else %}
-              No action available
-            {% endif %}
-          </button>
-  
-        
+        <div class="alert alert-success" style="display:none;"></div>
+
+        <button 
+        class="btn btn-update 
+            {% if task.status == 'pending' %} btn-warning 
+            {% elif task.status == 'in_progress' %} btn-info 
+            {% else %} btn-success 
+            {% endif %}"
+        data-task-id="{{ task.id }}">
+        {% if task.status == 'pending' %}
+            Mark as In Progress
+        {% elif task.status == 'in_progress' %}
+            Mark as Completed
+        {% else %}
+            Done
+        {% endif %}
+        </button>
+    
       </main>
 
 
