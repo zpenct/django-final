@@ -1,0 +1,38 @@
+_<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+      var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+      var courseId = null;
+
+      // Handle course delete button click to set course id
+      document.querySelectorAll('.btn-del').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          courseId = this.getAttribute('data-course-id');
+        });
+      });
+
+      // Handle the actual deletion when confirm is clicked
+      confirmDeleteBtn.addEventListener('click', function () {
+        if (courseId) {
+          // Make AJAX request to delete the course
+          fetch(`/courses/${courseId}/delete/`, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+            },
+          })
+            .then(function (response) {
+              if (response.ok) {
+                location.reload(); // Reload page after successful delete
+              } else {
+                alert('Failed to delete course');
+              }
+            })
+            .catch(function () {
+              alert('An error occurred');
+            });
+        }
+        deleteModal.hide(); // Close the modal
+      });
+    });
+  </script>
