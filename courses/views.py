@@ -107,4 +107,16 @@ class CourseDetailView(DetailView):
         context['Slug'] = course.slug
         context['Tasks'] = course.tasks.all()
         return context
-    
+
+from django.views.generic.edit import UpdateView
+
+class CourseUpdateView(UpdateView):
+    model = models.Course
+    form_class = forms.CourseForm
+    template_name = 'courses/edit.html'
+    success_url = reverse_lazy('courses:course_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = context.pop('form')
+        return context

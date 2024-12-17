@@ -9,6 +9,7 @@ from . import forms
 from courses.models import Course
 from django.utils import timezone
 from django.utils.timezone import make_aware
+from django.views.generic.edit import UpdateView
 
 def index(request):
     return render(request, 'tasks/index.html')
@@ -142,3 +143,15 @@ class TaskDeleteView(DeleteView):
         task = self.get_object()
         task.delete()
         return JsonResponse({'status': 'success', 'message': 'Task successfully deleted'})
+    
+class TaskUpdateView(UpdateView):
+    model = models.Task
+    form_class = forms.TaskForm
+    template_name = 'tasks/edit.html'  
+    success_url = reverse_lazy('tasks:tasks_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['task_form'] = context.pop('form')
+        context['Title'] = 'Edit Task'
+        return context

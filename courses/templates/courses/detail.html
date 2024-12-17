@@ -41,7 +41,7 @@
         <ul>
             {% for task in Tasks %}
                 <li>
-                  <a href="/">
+                  <a href="{% url 'tasks:tasks_detail' tasks_id=task.id %}">
                     <strong>{{ task.title }}</strong>  (Due: {{ task.due_date }})
                   </a>
                 </li>
