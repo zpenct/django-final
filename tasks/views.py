@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView,DeleteView
 from django.views.generic.edit import CreateView
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -134,6 +134,15 @@ def update_status(request, task_id):
         task.save()
         return JsonResponse({'status': task.status})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+class TaskDeleteView(DeleteView):
+    model = models.Task
+    success_url = reverse_lazy('tasks:tasks_list')
+
+    def delete(self, request, *args, **kwargs):
+        task = self.get_object()
+        task.delete()
+        return JsonResponse({'status': 'success', 'message': 'Task successfully deleted'})
 
 class TaskUpdateView(UpdateView):
     model = models.Task
