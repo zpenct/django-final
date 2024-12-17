@@ -1,0 +1,38 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+      var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+      var taskId = null;
+
+      // Handle task delete button click to set task id
+      document.querySelectorAll('.btn-del').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          taskId = this.getAttribute('data-task-id');
+        });
+      });
+
+      // Handle the actual deletion when confirm is clicked
+      confirmDeleteBtn.addEventListener('click', function () {
+        if (taskId) {
+          // Make AJAX request to delete the task
+          fetch(`/tasks/${taskId}/delete/`, {
+            method: 'DELETE',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+            },
+          })
+            .then(function (response) {
+              if (response.ok) {
+                location.reload(); // Reload page after successful delete
+              } else {
+                alert('Failed to delete task');
+              }
+            })
+            .catch(function () {
+              alert('An error occurred');
+            });
+        }
+        deleteModal.hide(); // Close the modal
+      });
+    });
+  </script>
