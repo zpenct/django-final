@@ -25,7 +25,7 @@
       </nav>
 
       <main>
-        <div id="response" class="alert" role="alert"></div>
+        <div id="alert-container" class="mt-3"></div>
         <form id="task-form" method="post" class="card p-4 shadow-sm">
           {% csrf_token %} {% for form in task_form %}
           <div class="form-group">
@@ -55,7 +55,17 @@
             type: "POST",
             data: formData,
             success: function (response) {
-              $("#response").addClass("alert-success").text("Task successfully submitted!").show();
+              const alertHtml = `
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Task successfully submitted!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>`;
+            $("#alert-container").html(alertHtml);
+
+            setTimeout(function () {
+              $(".alert").alert('close');
+              location.reload();
+            }, 3000);
               $("#task-form")[0].reset();
             },
             error: function (xhr, errmsg, err) {
