@@ -29,6 +29,7 @@
         <p>Link: <a href={{Task.link}}>{{Task.link}}</a></p>
         <p>Deskripsi : {{Task.description}}</p>
         <p>Due date : {{Task.due_date}}</p>
+        <p>Course : <a href="{% url "courses:course_detail" slug=Task.course.slug %}">{{Task.course.name}}</a></p>
 
         <div class="alert alert-success" style="display:none;"></div>
 
